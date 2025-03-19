@@ -1,9 +1,8 @@
 
 from board_visual import *
-from board_logic import *
+#from board_logic import *
 
-c = make_board()
-b = Board(10)
+c,b = make_board()
 
 
 
