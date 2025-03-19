@@ -11,9 +11,8 @@ HEIGHT = 800
 BOARD_START = 50
 BOARD_END = 550
 DIFF = (BOARD_END - BOARD_START)//10
-   
-displayed = []
 
+displayed = []
 
 def add_tup(a, b):
     a1, a2 = a
@@ -66,6 +65,8 @@ def generate_pieces(c, ls):
 
 
 def make_board():
+
+    global displayed
     b = Board(10)
 
     displayed += random.sample(PIECES, 3)
