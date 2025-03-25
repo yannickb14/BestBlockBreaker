@@ -15,6 +15,7 @@ BOARD = [[0]*13]*10
 
 
 displayed = [False, False, False]
+dragging = False
 
 
 def add_tup(a, b):
@@ -34,6 +35,11 @@ def fill(t, c):
     BOARD[x][y] = c.create_rectangle(tl_x, tl_y, br_x, br_y, fill="blue", width=1)
     c.pack()
 
+
+def delete(grids, c):
+    for x, y in grids:
+        c.delete(BOARD[x][y])
+
 def place(piece, coord, c):
     for p in piece:
         fill(add_tup(coord, p), c)
@@ -45,11 +51,27 @@ def place(piece, coord, c):
         return 
 
 
-def track_mouse(event, c = None):
-    x, y = event.x, event.y
+def handle(event, i, c):
+    delete(
 
+def drag_piece(event, i, c):
+    if dragging:
+       x, y = event.x, event.y
+       x_grid = x//DIFF - BOARD_START
+       y_grid = y//DIFF - BOARD_START
+       place(PIECES[i], (x_grid, y_grid), c)
+       
+       root.after(100, lambda: (delete(PIECES[i]); drag_piece(event, i, c)))
+        
+
+def done_dragging(event):
+    dragging = False
+
+def track_mouse(event, c = None):
+    dragging = True
+    
     if BOARD_START <= x <= BOARD_START + 150 and BOARD_END + 10 <= y <= BOARD_END + 150:
-        print("Clicked R1")
+        drag_piece(event, 0, c)
 
     elif BOARD_START + 150 <= x <= BOARD_START + 300 and BOARD_END + 10 <= y <= BOARD_END + 150:
         print("Clicked R2")
@@ -93,21 +115,16 @@ def make_board():
     c.create_rectangle(BOARD_START + 150, BOARD_END +10, BOARD_START + 300, BOARD_END + 150, fill="white") 
     c.create_rectangle(BOARD_START + 300, BOARD_END +10, BOARD_START + 450, BOARD_END + 150, fill="white") 
         
-    for x in range(BOARD_START, BOARD_END, DIFF):
+for x in range(BOARD_START, BOARD_END, DIFF):
         c.create_line(x, BOARD_START, x, BOARD_END, fill="black", width=5)
         c.create_line(BOARD_START, x, BOARD_END, x, fill="black", width=5)
 
 
     
     generate_pieces(c, displayed)
-    c.bind("<Button-1>", track_mouse)
+    c.bind("<Button-1>", drag_piece)
     c.pack()
-    
-
 
     root.mainloop()
     
-
-
-
     return c,b
