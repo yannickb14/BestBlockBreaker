@@ -1,11 +1,7 @@
 
 import tkinter as tk
 from piece import PIECES
-
-
-
-
-
+from holder import Holder
 
 def add_tup(a, b):
     a1, a2 = a
@@ -34,6 +30,10 @@ class Board:
         c.create_line(coord_end, coord_start, coord_start, coord_start, fill="black", width=5)
         c.create_line(coord_start, coord_end, coord_start, coord_start, fill="black", width=5)
     
+    
+   
+
+
         c.create_rectangle(coord_start, coord_end, coord_start + 3*self.diff, coord_end + 3*self.diff, fill="white")
         c.create_rectangle(coord_start + 3*self.diff, coord_end, coord_start + 6*self.diff, coord_end + 3*self.diff, fill="white")
         c.create_rectangle(coord_start + 6*self.diff, coord_end, coord_start + 9*self.diff, coord_end + 3*self.diff, fill="white")

@@ -11,7 +11,7 @@ BOARD_START = 50
 BOARD_END = 550
 DIFF = (BOARD_END - BOARD_START)//10
 
-BOARD = [[0]*13]*10
+BOARD = [[0]*10]*10
 
 
 displayed = [False, False, False]
