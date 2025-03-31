@@ -1,11 +1,14 @@
 
+
 import tkinter as tk
+import random
 from piece import PIECES
 from holder import Holder
 
 def add_tup(a, b):
     a1, a2 = a
     b1, b2 = b
+
     return (a1 + b1, a2 + b2)
 
 
@@ -29,9 +32,6 @@ class Board:
         c.create_line(coord_end, coord_start, coord_end, coord_end, fill="black", width=5)
         c.create_line(coord_end, coord_start, coord_start, coord_start, fill="black", width=5)
         c.create_line(coord_start, coord_end, coord_start, coord_start, fill="black", width=5)
-    
-    
-   
 
 
         c.create_rectangle(coord_start, coord_end, coord_start + 3*self.diff, coord_end + 3*self.diff, fill="white")
@@ -46,8 +46,12 @@ class Board:
 
 
         c.bind("<Button-1>", self.track_mouse)
+        c.bind("<ButtonRelease-1>", self.track_mouse)
 
         self.c = c
+        
+        self.generate_pieces()
+
 
         c.pack()
         root.mainloop()
@@ -55,11 +59,11 @@ class Board:
     def fill(self, t):
     
         x, y = t
-        tl_x = self.coord_start + DIFF*x 
-        tl_y = self.coord_start + DIFF*y 
+        tl_x = self.coord_start + self.diff*x 
+        tl_y = self.coord_start + self.diff*y 
     
-        br_x = self.coord_start + DIFF*x + DIFF
-        br_y = self.coord_start + DIFF*y + DIFF
+        br_x = self.coord_start + self.diff*x + self.diff
+        br_y = self.coord_start + self.diff*y + self.diff
     
         drawn = self.c.create_rectangle(tl_x, tl_y, br_x, br_y, fill="blue", width=1)
 
@@ -67,7 +71,7 @@ class Board:
             self.board[x][y] = drawn
         
 
-        c.pack()
+        self.c.pack()
 
     def place(self, piece, coord):
         for p in piece:
@@ -75,15 +79,27 @@ class Board:
         
         if not any(self.displayed):
             self.generate_pieces() 
+    
+    def drag(self, piece, event):
+        x,y = event.x, event.y
+        slot_x = x - coord_start
+        slot_y = y - coord_start
 
+       # slot_x = round(x, -1)
+       # slot_y = round(y, -1)
+        self.place(piece, slot_x, slot_x)
 
+        
+        
     def track_mouse(self, event):
-        self.dragging = True
+        
+        self.dragging = False if self.dragging else True
         
         x,y = event.x, event.y
         
         if self.coord_start <= x <= self.coord_start + 150 and self.coord_end <= y <= self.coord_end + 150:
-            print("Clicked R1")
+            self.drag(self.displayed[0], event)
+
 
         elif self.coord_start + 150 <= x <= self.coord_start + 300 and self.coord_end <= y <= self.coord_end + 150:
             print("Clicked R2")
@@ -96,12 +112,10 @@ class Board:
 
 
     def generate_pieces(self):
-        if (not any(self.displayed)):
-            self.displayed = random.sample(PIECES,3)
-
-            self.place(self.displayed[0], (1, 12))
-            self.place(self.displayed[1], (5, 12))
-            self.place(self.displayed[2], (7, 12))
+        self.displayed = random.sample(PIECES,3)
+        self.place(self.displayed[0], (1, 12))
+        self.place(self.displayed[1], (5, 12))
+        self.place(self.displayed[2], (7, 12))
         
 
 b=Board(50, 550, 600, 800, 10)

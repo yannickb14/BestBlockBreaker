@@ -1,7 +1,7 @@
 
 
 class Holder:
-    def __init__(self, pid)
+    def __init__(self, pid):
         self.containment = [[False]*3]*3
         self.pid = 0
 
