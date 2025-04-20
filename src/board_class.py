@@ -45,7 +45,7 @@ class Board:
 
 
 
-        c.bind("<Button-1>", self.track_mouse)
+        #c.bind("<Button-1>", self.track_mouse)
         c.bind("<ButtonRelease-1>", self.track_mouse)
 
         self.c = c
@@ -55,6 +55,19 @@ class Board:
 
         c.pack()
         root.mainloop()
+
+    def coords_to_tile(self, coords):
+        x, y = coords
+        print(x, y)
+
+        x -= self.coord_start
+        y -= self.coord_start
+        
+        x //= self.dim * 10 
+        y //= self.dim * 10
+
+        return (x,y)
+
 
     def fill(self, t):
     
@@ -66,44 +79,45 @@ class Board:
         br_y = self.coord_start + self.diff*y + self.diff
     
         drawn = self.c.create_rectangle(tl_x, tl_y, br_x, br_y, fill="blue", width=1)
-
-        if y <= self.dim:
-            self.board[x][y] = drawn
-        
-
+       
+#        if y <= self.dim:            
+        self.board[x][y] = drawn
         self.c.pack()
+
+    def remove(self, coord):
+       x,y = coord
+       self.c.delete(self.board[x][y])
+       self.board[x][y] = 0
+
 
     def place(self, piece, coord):
         for p in piece:
             self.fill(add_tup(coord, p))
-        
+
         if not any(self.displayed):
             self.generate_pieces() 
 
         
     def drag(self, piece, event):
         x,y = event.x, event.y
-        slot_x = x - self.coord_start
-        slot_y = y - self.coord_start
+        x,y = self.coords_to_tile((x,y))
 
-        self.place(piece, (slot_x, slot_x))
+        #slot_x = x - self.coord_start
+        #slot_y = y - self.coord_start
+
+        self.place(piece, (x, y))
         self.c.after(100, self.track_mouse_cont)
         
 
-    def track_mouse(self, event): #Make _release, have realease set dragging to false and do regular place
-                                    #Calls itself
-                                    # make the normal one do place without locking into place. 
-        
+    def track_mouse(self, event): 
         self.dragging = False if self.dragging else True
         self.track_mouse_cont(event) 
         
     def track_mouse_cont(self, event): 
-
         x,y = event.x, event.y
                 
         if self.coord_start <= x <= self.coord_start + 150 and self.coord_end <= y <= self.coord_end + 150:
             self.drag(self.displayed[0], event)
-
 
         elif self.coord_start + 150 <= x <= self.coord_start + 300 and self.coord_end <= y <= self.coord_end + 150:
             print("Clicked R2")
