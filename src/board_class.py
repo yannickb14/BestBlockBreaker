@@ -58,7 +58,6 @@ class Board:
 
     def coords_to_tile(self, coords):
         x, y = coords
-        print(x, y)
 
         x -= self.coord_start
         y -= self.coord_start
