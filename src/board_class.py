@@ -79,7 +79,8 @@ class Board:
         
         if not any(self.displayed):
             self.generate_pieces() 
-    
+
+        
     def drag(self, piece, event):
         x,y = event.x, event.y
         slot_x = x - self.coord_start
@@ -87,9 +88,8 @@ class Board:
 
         self.place(piece, (slot_x, slot_x))
         self.c.after(100, self.track_mouse_cont)
+        
 
-        
-        
     def track_mouse(self, event): #Make _release, have realease set dragging to false and do regular place
                                     #Calls itself
                                     # make the normal one do place without locking into place. 
