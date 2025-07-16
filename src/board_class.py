@@ -46,7 +46,9 @@ class Board:
 
 
         #c.bind("<Button-1>", self.track_mouse)
-        c.bind("<ButtonRelease-1>", self.track_mouse)
+        #c.bind("<ButtonRelease-1>", self.track_mouse)
+
+        c.bind("<ButtonRelease-1", self.place_piece)
 
         self.c = c
         
@@ -55,6 +57,19 @@ class Board:
 
         c.pack()
         root.mainloop()
+
+  
+            
+
+    def place_piece(self, event):
+        if self.dragging:
+            #Stop dragging, place
+            pass
+
+        else:
+            #Start dragging
+            pass
+
 
     def coords_to_tile(self, coords):
         x, y = coords
@@ -66,7 +81,6 @@ class Board:
         y //= self.dim * 10
 
         return (x,y)
-
 
     def fill(self, t):
     
@@ -109,8 +123,18 @@ class Board:
         
 
     def track_mouse(self, event): 
-        self.dragging = False if self.dragging else True
-        self.track_mouse_cont(event) 
+        if self.dragging:
+
+            #Place the piece
+            self.dragging = False
+
+        else:
+            #Start dragging
+
+
+            self.dragging = False
+
+            self.track_mouse_cont(event) 
         
     def track_mouse_cont(self, event): 
         x,y = event.x, event.y
