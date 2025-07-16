@@ -48,7 +48,7 @@ class Board:
         #c.bind("<Button-1>", self.track_mouse)
         #c.bind("<ButtonRelease-1>", self.track_mouse)
 
-        c.bind("<ButtonRelease-1", self.place_piece)
+        c.bind("<ButtonRelease-1>", self.place_piece)
 
         self.c = c
         
@@ -62,13 +62,18 @@ class Board:
             
 
     def place_piece(self, event):
+        x, y = event.x, event.y
         if self.dragging:
-            #Stop dragging, place
-            pass
+            x_tile, y_tile = self.coords_to_tile((x, y))
+            self.place(self.displayed[0], (x_tile, y_tile)) 
+            
+
+
+            self.dragging = False
 
         else:
             #Start dragging
-            pass
+            self.dragging = True
 
 
     def coords_to_tile(self, coords):
@@ -94,6 +99,7 @@ class Board:
         drawn = self.c.create_rectangle(tl_x, tl_y, br_x, br_y, fill="blue", width=1)
        
 #        if y <= self.dim:            
+        print(x,y)
         self.board[x][y] = drawn
         self.c.pack()
 
