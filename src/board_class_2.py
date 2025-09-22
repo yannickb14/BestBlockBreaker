@@ -108,13 +108,13 @@ class Board:
        self.board[x][y] = 0
 
 
-    def place(self, piece, coord):
-        for p in piece:
-            self.fill(add_tup(coord, p))
-
-        if not any(self.displayed):
-            self.generate_pieces() 
-
+#    def place(self, piece, coord):
+#        for p in piece:
+#            self.fill(add_tup(coord, p))
+#
+#        if not any(self.displayed):
+#            self.generate_pieces() 
+#
         
     def drag(self, piece, event):
         x,y = event.x, event.y
