@@ -2,8 +2,6 @@ import tkinter as tk
 import random
 from piece import PIECES
 
-import numpy as np
-
 from Move import Move
 
 
@@ -21,6 +19,8 @@ class Board:
         self.coord_end = coord_end
         self.dim = dim
         self.diff = (coord_end - coord_start)//dim
+        
+        self.score = 0
 
 
         self.board = [[0 for _ in range(dim + 3)] for _ in range(dim)]
@@ -136,24 +136,21 @@ class Board:
 
         move = Move(src, dest)
 
-        self.place_piece(move)
+        self.execute_move(move)
 
         
     
 
-    def place_piece(self, move):
+    def execute_move(self, move):
         
         if not self.is_valid_move(move):
             print("Move is invalid")
             return
 
-
         src = move.src
         dest = move.dest
         
-
         piece = self.displayed[src]
-
 
         self.place(piece, dest)
 
@@ -163,6 +160,19 @@ class Board:
 
         if not any(self.displayed):
             self.generate_pieces()
+
+        rows_to_clear, cols_to_clear = self.need_to_clear()
+        
+        for row in rows_to_clear:
+            for i in range(self.dim):
+                self.remove((row, i)) 
+
+        for col in cols_to_clear:
+            for i in range(self.dim):
+                self.remove(i, col)
+
+
+
         
     def coords_to_tile(self, coords):
         x, y = coords
@@ -196,24 +206,46 @@ class Board:
        self.c.delete(self.board[x][y])
        self.board[x][y] = 0
 
+    def need_to_clear(self):
+        '''
+        Check if any of the inputted rows or columns need to be cleared
+        '''
+        rows_to_clear = []
+        cols_to_clear = []
+        for i, row in enumerate(self.board):
+            if all(row):
+                rows_to_clear.append(i)
+
+        for c in range(self.dim):
+            all_1s = True
+            for row in self.board:
+                if row[c] != 1:
+                    all_1s = False
+                    break
+
+            if all_1s:
+                cols_to_clear.append(c)
+
+        return rows_to_clear, cols_to_clear
+
 
     def place(self, piece, coord):
         #Make the first one gold so we know where its actually being place
         for i, p in enumerate(piece):
             self.fill(add_tup(coord, p), color="gold" if i==0 else "blue")
 
-        if not any(self.displayed):
-            self.generate_pieces() 
+
 
     
     def generate_pieces(self):
         self.displayed = random.sample(PIECES,3)
         print(self.displayed)
-        self.place(self.displayed[0], self.holders[0])
-        self.place(self.displayed[1], self.holders[1])
-        self.place(self.displayed[2], self.holders[2])
-        
 
+        for i in range(3):
+            self.place(self.displayed[i], self.holders[i])        
+
+
+    
 if __name__ == "__main__":
     b=Board(50, 550, 600, 800, 10)
 
