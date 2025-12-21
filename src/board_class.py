@@ -16,7 +16,7 @@ def add_tup(a, b):
 
 class Board:
     def __init__(self, coord_start, coord_end, width, height, dim):
-        
+
         self.coord_start = coord_start 
         self.coord_end = coord_end
         self.dim = dim
@@ -34,6 +34,7 @@ class Board:
         #Where to store the pieces that are displayed so we can hold the reference to be
         #able to delete them
         self.piece_options_store = defaultdict(dict)
+        self.piece_options = PIECES
  
         root = tk.Tk()
         c = tk.Canvas(root, width=width, height=height, bg = "grey")
@@ -133,8 +134,6 @@ class Board:
         move = self.entry.get()
         move = move.split(',')
 
-        if len(move) != 3:
-            print("Length invalid")
 
         src = move[0]
         
@@ -153,7 +152,6 @@ class Board:
         self.execute_move(move)
 
         
-    
 
     def execute_move(self, move):
         if not self.is_valid_move(move):
@@ -175,12 +173,7 @@ class Board:
             self.generate_pieces()
 
         rows_to_clear, cols_to_clear = self.need_to_clear()
-
-        if rows_to_clear or cols_to_clear:
-            print("To clear")
-        else:
-            print("Not to clear")
-        
+ 
         for row in rows_to_clear:
             for i in range(self.dim):
                 self.remove((row, i), self.board) 
@@ -260,13 +253,12 @@ class Board:
             self.fill(add_tup(coord, p), where, color="gold" if i==0 else "blue")
  
     def generate_pieces(self):
-        self.displayed = random.sample(DEBUG_PIECES, 3)
+        self.displayed = random.sample(self.piece_options, 3)
 
         for i in range(3):
             self.place(self.displayed[i], self.holders[i], where = self.piece_options_store)        
 
-
-    
+ 
 if __name__ == "__main__":
     b=Board(50, 550, 600, 800, 10)
 
