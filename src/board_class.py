@@ -1,6 +1,7 @@
 import tkinter as tk
 import random
 from collections import defaultdict
+from tkinter import font
 
 from piece import PIECES, DEBUG_PIECES
 from Move import Move
@@ -22,6 +23,7 @@ class Board:
         self.diff = (coord_end - coord_start)//dim
         
         self.score = 0
+        self.prev_score_drawn = None
 
 
         self.board = [[0 for _ in range(dim)] for _ in range(dim)]
@@ -60,10 +62,24 @@ class Board:
 
         btn = tk.Button(root, text="Submit", command=self.get_input)
         btn.pack()
+        self.update_score()
 
 
         c.pack()
         self.root.mainloop()
+
+    def update_score(self):
+        pos = (self.coord_start + self.coord_end) / 2
+
+        if self.prev_score_drawn:
+            self.c.delete(self.prev_score_drawn)
+
+        my_font = font.Font(family="Arial", size=22, weight="bold", slant="italic")
+        self.prev_score_drawn = self.c.create_text(pos, 30, 
+                           text=self.score,
+                           fill="blue",
+                           font=my_font
+                           ) 
 
   
     def flash_message(self, text, color, duration=3000):
@@ -140,7 +156,6 @@ class Board:
     
 
     def execute_move(self, move):
-        
         if not self.is_valid_move(move):
             return
 
@@ -150,6 +165,7 @@ class Board:
         piece = self.displayed[src]
 
         self.place(piece, dest, where = self.board)
+        self.score += len(piece)
 
         self.displayed[src] = None
         for p in piece:
@@ -173,6 +189,8 @@ class Board:
             for i in range(self.dim):
                 self.remove((i, col), self.board)
 
+        self.update_score()
+
  
     def coords_to_tile(self, coords):
         x, y = coords
@@ -188,7 +206,6 @@ class Board:
         return (x ,y)
 
     def fill(self, t, where, color="blue"):
-    
         x, y = t
         tl_x = self.coord_start + self.diff*x 
         tl_y = self.coord_start + self.diff*y 
@@ -211,6 +228,9 @@ class Board:
        self.c.delete(where[x][y])
        where[x][y] = 0
 
+    def increment_score(self, amt):
+        self.score += (amt * self.dim) 
+
     def need_to_clear(self):
         '''
         Check if any of the inputted rows or columns need to be cleared
@@ -224,24 +244,21 @@ class Board:
         for c in range(self.dim):
             all_1s = True
             for row in self.board:
-                if row[c] != 1:
+                if row[c] == 0:
                     all_1s = False
                     break
 
             if all_1s:
                 cols_to_clear.append(c)
 
+        self.increment_score(len(rows_to_clear) + len(cols_to_clear))
         return rows_to_clear, cols_to_clear
-
 
     def place(self, piece, coord, where):
         #Make the first one gold so we know where its actually being place
         for i, p in enumerate(piece):
             self.fill(add_tup(coord, p), where, color="gold" if i==0 else "blue")
-
-
-
-    
+ 
     def generate_pieces(self):
         self.displayed = random.sample(DEBUG_PIECES, 3)
 
