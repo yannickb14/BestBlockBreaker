@@ -1,7 +1,8 @@
 import tkinter as tk
 import random
-from piece import PIECES
+from collections import defaultdict
 
+from piece import PIECES, DEBUG_PIECES
 from Move import Move
 
 
@@ -23,12 +24,15 @@ class Board:
         self.score = 0
 
 
-        self.board = [[0 for _ in range(dim + 3)] for _ in range(dim)]
-        #self.board = np.zeros((self.dim + 3, self.dim))
+        self.board = [[0 for _ in range(dim)] for _ in range(dim)]
 
         #This is for the options of the pieces
         self.displayed = [None, None, None] #the pieces to choose from
         self.holders = [(1, 11), (4, 11), (7, 11)] # The coordinates for the pieces
+        #Where to store the pieces that are displayed so we can hold the reference to be
+        #able to delete them
+        #self.piece_options_store = [[None for _ in range(dim)] for _ in range(3)]
+        self.piece_options_store = defaultdict(dict)
 
         
 
@@ -130,7 +134,7 @@ class Board:
         except TypeError:
             print(src)
         try:
-            dest = int(move[1]), int(move[2])
+            dest = (int(move[2]), int(move[1]))
         except TypeError:
             print(dest)
 
@@ -144,7 +148,6 @@ class Board:
     def execute_move(self, move):
         
         if not self.is_valid_move(move):
-            print("Move is invalid")
             return
 
         src = move.src
@@ -152,28 +155,31 @@ class Board:
         
         piece = self.displayed[src]
 
-        self.place(piece, dest)
+        self.place(piece, dest, where = self.board)
 
         self.displayed[src] = None
         for p in piece:
-            self.remove(add_tup(self.holders[src], p))
+            self.remove(add_tup(self.holders[src], p), self.piece_options_store)
 
         if not any(self.displayed):
             self.generate_pieces()
 
         rows_to_clear, cols_to_clear = self.need_to_clear()
+
+        if rows_to_clear or cols_to_clear:
+            print("To clear")
+        else:
+            print("Not to clear")
         
         for row in rows_to_clear:
             for i in range(self.dim):
-                self.remove((row, i)) 
+                self.remove((row, i), self.board) 
 
         for col in cols_to_clear:
             for i in range(self.dim):
-                self.remove(i, col)
+                self.remove((i, col), self.board)
 
-
-
-        
+ 
     def coords_to_tile(self, coords):
         x, y = coords
 
@@ -187,7 +193,7 @@ class Board:
 
         return (x ,y)
 
-    def fill(self, t, color="blue"):
+    def fill(self, t, where, color="blue"):
     
         x, y = t
         tl_x = self.coord_start + self.diff*x 
@@ -198,13 +204,18 @@ class Board:
     
         drawn = self.c.create_rectangle(tl_x, tl_y, br_x, br_y, fill=color, width=1)
        
-        self.board[x][y] = drawn
+        try:
+            where[x][y] = drawn
+        except IndexError as e:
+            print(f'Problem indices are ({x}, {y}) in {where}')
+            raise e
+        
         self.c.pack()
 
-    def remove(self, coord):
+    def remove(self, coord, where):
        x, y = coord
-       self.c.delete(self.board[x][y])
-       self.board[x][y] = 0
+       self.c.delete(where[x][y])
+       where[x][y] = 0
 
     def need_to_clear(self):
         '''
@@ -229,20 +240,19 @@ class Board:
         return rows_to_clear, cols_to_clear
 
 
-    def place(self, piece, coord):
+    def place(self, piece, coord, where):
         #Make the first one gold so we know where its actually being place
         for i, p in enumerate(piece):
-            self.fill(add_tup(coord, p), color="gold" if i==0 else "blue")
+            self.fill(add_tup(coord, p), where, color="gold" if i==0 else "blue")
 
 
 
     
     def generate_pieces(self):
-        self.displayed = random.sample(PIECES,3)
-        print(self.displayed)
+        self.displayed = random.sample(DEBUG_PIECES, 3)
 
         for i in range(3):
-            self.place(self.displayed[i], self.holders[i])        
+            self.place(self.displayed[i], self.holders[i], where = self.piece_options_store)        
 
 
     
