@@ -31,13 +31,8 @@ class Board:
         self.holders = [(1, 11), (4, 11), (7, 11)] # The coordinates for the pieces
         #Where to store the pieces that are displayed so we can hold the reference to be
         #able to delete them
-        #self.piece_options_store = [[None for _ in range(dim)] for _ in range(3)]
         self.piece_options_store = defaultdict(dict)
-
-        
-
-        #self.dragging = False
-        
+ 
         root = tk.Tk()
         c = tk.Canvas(root, width=width, height=height, bg = "grey")
 
@@ -51,7 +46,6 @@ class Board:
         c.create_rectangle(coord_start + 3*self.diff, coord_end, coord_start + 6*self.diff, coord_end + 3*self.diff, fill="white")
         c.create_rectangle(coord_start + 6*self.diff, coord_end, coord_start + 9*self.diff, coord_end + 3*self.diff, fill="white")
         
-
         for x in range(coord_start, coord_end, self.diff):
             c.create_line(x, coord_start, x, coord_end, fill="black", width=5)
             c.create_line(coord_start, x, coord_end, x, fill="black", width=5)
