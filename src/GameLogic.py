@@ -28,7 +28,7 @@ class GameLogic:
 
         #This is for the options of the pieces
         self.displayed = [None, None, None] #the pieces to choose from
-        self.piece_options = PIECES
+        self.piece_options = [[(0,0), (1,0), (2,0)], [(0,0), (1,0), (2,0)], [(0,0), (1,0), (2,0)]]           #PIECES
   
         self.generate_pieces()
 
@@ -41,6 +41,9 @@ class GameLogic:
         '''
         src = move.src
         dest = move.dest
+
+        if not src in range(3):
+            print("Invalid move, src must be between 0 and 2 inclusive")
 
         piece = self.displayed[src]
 
@@ -126,6 +129,7 @@ class GameLogic:
     def execute_move(self, move):
         if not self.is_valid_move(move):
             return
+            
 
         src = move.src
         dest = move.dest
