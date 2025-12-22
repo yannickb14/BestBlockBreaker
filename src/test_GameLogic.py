@@ -15,7 +15,7 @@ class TestGameLogic(unittest.TestCase):
         """
 
         self.game = GameLogic(10)
-        self.game.displayed = [TEST_PIECE_DOT, TEST_PIECE_LINE_HORIZENTAL, TEST_PIECE_LINE_VERTICAL] #To get predictable states
+        self.game.displayed = [TEST_PIECE_DOT, TEST_PIECE_LINE_HORIZENTAL, TEST_PIECE_LINE_VERTICAL] 
 
     def test_initialization(self):
         """
@@ -132,7 +132,7 @@ class TestGameLogic(unittest.TestCase):
         '''
         Tests a more complex game scenario
         where many rows and columns are cleared
-        at once.
+        at once. Simulating many clears in a row
 
         Note: If clearing a row and column at the same time,
         the game awards 10 for the row and 10 for the column
@@ -187,11 +187,6 @@ class TestGameLogic(unittest.TestCase):
         self.assertEqual(self.game.score, 87)
 
 
-
 if __name__ == "__main__":
     unittest.main()
 
-
-'''
-
-'''

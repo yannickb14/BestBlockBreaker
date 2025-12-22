@@ -5,7 +5,7 @@ Just the logic of the game, no UI
 
 import random
 
-from piece import PIECES, DEBUG_PIECES
+from piece import PIECES
 from Move import Move
 
 def add_tup(a, b):
@@ -28,7 +28,7 @@ class GameLogic:
 
         #This is for the options of the pieces
         self.displayed = [None, None, None] #the pieces to choose from
-        self.piece_options = [[(0,0), (1,0), (2,0)], [(0,0), (1,0), (2,0)], [(0,0), (1,0), (2,0)]]           #PIECES
+        self.piece_options = PIECES
   
         self.generate_pieces()
 
@@ -44,6 +44,7 @@ class GameLogic:
 
         if not src in range(3):
             print("Invalid move, src must be between 0 and 2 inclusive")
+            return False
 
         piece = self.displayed[src]
 
