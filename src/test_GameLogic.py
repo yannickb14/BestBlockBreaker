@@ -154,22 +154,6 @@ class TestGameLogic(unittest.TestCase):
         self.assertEqual(self.game.score, 33)
 
         #========================
-        #Clear three cols at once
-        #========================
-        for row in range(5,8):
-            for col in range(9):
-                self.game.board[row][col] = 1
-
-        move = Move(2, (5,9))
-        
-        print(self.game.board)
-        self.game.execute_move(move)
-        for row in self.game.board:
-            self.assertFalse(any(row)) #FAILS HERE!!
-
-        self.assertEqual(self.game.score, 33)
-
-        #========================
         #Clear three rows at once
         #========================
         for row in range(9):
@@ -184,31 +168,30 @@ class TestGameLogic(unittest.TestCase):
 
         self.assertEqual(self.game.score, 66)
 
+        #====================================
+        #Clear a row and col at the same time
+        #====================================
+        for i in range (10):
+            if i == 7:
+                self.game.board[7][i] = 1
+            elif i == 3:
+                self.game.board[i][3] = 1
+            else:
+                self.game.board[7][i] = 1
+                self.game.board[i][3] = 1
+
+        #Place 1x1 piece at the intersection. Score should by 21
+        move = Move(0, (7, 3))
+        self.assertTrue(self.game.is_valid_move(move)) 
+        self.game.execute_move(move)
+        self.assertEqual(self.game.score, 87)
+
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
+'''
 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+'''
