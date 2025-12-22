@@ -1,5 +1,5 @@
 import unittest
-from GameLogic import GameLogic  
+from game_logic import GameLogic  
 from Move import Move            
 
 TEST_PIECE_DOT = [(0, 0)] 
@@ -25,6 +25,8 @@ class TestGameLogic(unittest.TestCase):
         self.assertEqual(len(self.game.board), 10)
         
         self.assertEqual(self.game.board[5][5], 0)
+
+        self.assertFalse(self.game.check_game_over())
 
     def test_valid_move(self):
         """
@@ -141,7 +143,7 @@ class TestGameLogic(unittest.TestCase):
         '''
         Tests a more complex game scenario
         where many rows and columns are cleared
-        at once. Simulating many clears in a row
+        at once. Simulating many clears in a row.
 
         Note: If clearing a row and column at the same time,
         the game awards 10 for the row and 10 for the column
@@ -195,6 +197,12 @@ class TestGameLogic(unittest.TestCase):
         self.game.execute_move(move)
         self.assertEqual(self.game.score, 87)
 
+    def test_game_over(self):
+        for i in range(10):
+            for j in range(10):
+                self.game.board[i][j] = 1
+        
+        self.assertTrue(self.game.check_game_over())
 
 if __name__ == "__main__":
     unittest.main()

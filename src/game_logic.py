@@ -15,16 +15,17 @@ def add_tup(a, b):
     return (a1 + b1, a2 + b2)
 
 class GameLogic:
-    def __init__(self, dim, verbose = True):
+    def __init__(self, dim, verbose = True, display_message = print):
 
+        self.verbose = verbose
         if dim != 10:
             if self.verbose:
                 print("For now, dimension shall be 10.")
             dim = 10
         self.dim = dim
 
-        self.verbose = verbose
-        
+        self.display_message = display_message
+ 
         self.score = 0
 
         self.board = [[0 for _ in range(dim)] for _ in range(dim)]
@@ -47,14 +48,14 @@ class GameLogic:
 
         if not src in range(3):
             if self.verbose:
-                print("Invalid move, src must be between 0 and 2 inclusive")
+                self.display_message(f"Invalid move, src must be between 0 and 2 inclusive, you entered {src}")
             return False
 
         piece = self.displayed[src]
 
         if piece is None:
             if self.verbose:
-                print(f"Invalid move, no piece at position {src}")
+                self.display_message(f"Invalid move, no piece at position {src}")
             return False
 
         tiles = self.get_tiles(dest, piece)
@@ -62,17 +63,17 @@ class GameLogic:
         for r, c in tiles:
             if not (0 <= r < self.dim) or not (0 <= c < self.dim):
                 if self.verbose:
-                    print("Invalid move, coordinate ({r},{c} out of range for dimension {self.dim})")
+                    self.display_message("Invalid move, coordinate ({r},{c} out of range for dimension {self.dim})")
                 return False
 
         for r, c in tiles:
             if self.board[r][c] != 0:
                 if self.verbose:
-                    print("Invalid move, overlap at position ({r},{c})")
+                    self.display_message("Invalid move, overlap at position ({r},{c})")
                 return False
 
         if self.verbose:
-            print("Valid move")
+            self.display_message("Valid move")
         return True
         
         
@@ -83,57 +84,59 @@ class GameLogic:
 
     def display_board(self):
         if self.verbose:
-            print(self.board)
+            self.display_message(self.board)
 
     def display_options(self):
         if self.verbose:
-            print(self.displayed)
+            self.display_message(self.displayed)
+
+    def parse_input(self, innput):
+        innput = innput.split(',')
+        if len(innput) != 3:
+            self.display_message("Move must consist of 3 things")
+            return None
+        src = innput[0]
+        dest = (innput[2], innput[1])
+
+        try:
+            src = int(src)
+        except TypeError:
+            self.display_message(f'Invalid move, {src} is not a valid piece option')
+            return None
+        try:
+            dest = (int(dest[0]), int(dest[1]))
+        except TypeError:
+            self.display_message(f"Invalid move, {dest} is not a valid coordinate to place")
+            return None
+
+        return Move(src, dest)
+        
     
     def get_input(self):
         '''
         The main game loop
         '''
-        print("Enter a move to be executed, q to quit, d to display the board or p to view the piece options: ")
+        self.display_message("Enter a move to be executed, q to quit, d to display the board or p to view the piece options: ")
         while True:
             user_in = input("Enter command: ")
 
             if user_in == 'q':
-                print(f"Thanks for playing! You reached score {self.score}")
+                self.display_message(f"Thanks for playing! You reached score {self.score}")
                 break
 
             elif user_in == 'd':
-                print("Here is the board:")
+                self.display_message("Here is the board:")
                 self.display_board()
                 continue
 
             elif user_in == 'p':
-                print("Here are your options:")
+                self.display_message("Here are your options:")
                 self.display_options
                 continue
 
-            user_in = user_in.split(',')
-        
-            if len(user_in) != 3:
-                print("Invalid move, moves should have length 3")
-                continue
-
-            src = user_in[0]
-            dest = (user_in[2], user_in[1])
-        
-            try:
-                src = int(src)
-            except TypeError:
-                print(f'Invalid move, {src} is not a valid piece option')
-                continue
-            try:
-                dest = (int(dest[0]), int(dest[1]))
-            except TypeError:
-                print(f"Invalid move, {dest} is not a valid coordinate to place")
-                continue
-
-            move = Move(src, dest)
-
-            self.execute_move(move)
+            move = self.parse_input(user_in)
+            if not move in None:
+                self.execute_move(move)
 
             if self.check_game_over():
                 self.game_over_procedure()
@@ -151,12 +154,16 @@ class GameLogic:
                 for j in range(10):
                     move = Move(piece_idx, (i, j))
                     if self.is_valid_move(move):
-                        return True
-        return False
+                        return False
+        return True
 
     def execute_move(self, move):
+        '''
+        Update board state by executing the move
+        Returns whether the move was succesfully executed
+        '''
         if not self.is_valid_move(move):
-            return
+            return False
             
 
         src = move.src
@@ -182,13 +189,13 @@ class GameLogic:
             for i in range(self.dim):
                 self.remove((i, col), self.board)
 
-
+        return True
 
     def game_over_procedure(self):
         '''
         Ends the game
         '''
-        print(f"GAME OVER! You reached score {self.score}!")
+        self.display_message(f"GAME OVER! You reached score {self.score}!")
 
 
     def remove(self, coord, where):

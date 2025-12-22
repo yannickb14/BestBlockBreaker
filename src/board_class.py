@@ -261,5 +261,3 @@ class Board:
  
 if __name__ == "__main__":
     b=Board(50, 550, 600, 800, 10)
-
-
