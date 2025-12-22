@@ -15,12 +15,15 @@ def add_tup(a, b):
     return (a1 + b1, a2 + b2)
 
 class GameLogic:
-    def __init__(self, dim):
+    def __init__(self, dim, verbose = True):
 
         if dim != 10:
-            print("For now, dimension shall be 10.")
+            if self.verbose:
+                print("For now, dimension shall be 10.")
             dim = 10
         self.dim = dim
+
+        self.verbose = verbose
         
         self.score = 0
 
@@ -43,28 +46,33 @@ class GameLogic:
         dest = move.dest
 
         if not src in range(3):
-            print("Invalid move, src must be between 0 and 2 inclusive")
+            if self.verbose:
+                print("Invalid move, src must be between 0 and 2 inclusive")
             return False
 
         piece = self.displayed[src]
 
         if piece is None:
-            print(f"Invalid move, no piece at position {src}")
+            if self.verbose:
+                print(f"Invalid move, no piece at position {src}")
             return False
 
         tiles = self.get_tiles(dest, piece)
 
         for r, c in tiles:
             if not (0 <= r < self.dim) or not (0 <= c < self.dim):
-                print("Invalid move, coordinate ({r},{c} out of range for dimension {self.dim})")
+                if self.verbose:
+                    print("Invalid move, coordinate ({r},{c} out of range for dimension {self.dim})")
                 return False
 
         for r, c in tiles:
             if self.board[r][c] != 0:
-                print("Invalid move, overlap at position ({r},{c})")
+                if self.verbose:
+                    print("Invalid move, overlap at position ({r},{c})")
                 return False
 
-        print("Valid move")
+        if self.verbose:
+            print("Valid move")
         return True
         
         
@@ -74,10 +82,12 @@ class GameLogic:
         return tiles
 
     def display_board(self):
-        print(self.board)
+        if self.verbose:
+            print(self.board)
 
     def display_options(self):
-        print(self.displayed)
+        if self.verbose:
+            print(self.displayed)
     
     def get_input(self):
         '''
@@ -125,7 +135,24 @@ class GameLogic:
 
             self.execute_move(move)
 
-        
+            if self.check_game_over():
+                self.game_over_procedure()
+                break
+
+
+    def check_game_over(self):
+        """
+        Returns whether the game is over
+        """
+        for piece_idx in range(len(self.displayed)):
+            if self.displayed[piece_idx] is None:
+                continue
+            for i in range(10):
+                for j in range(10):
+                    move = Move(piece_idx, (i, j))
+                    if self.is_valid_move(move):
+                        return True
+        return False
 
     def execute_move(self, move):
         if not self.is_valid_move(move):
@@ -155,6 +182,13 @@ class GameLogic:
             for i in range(self.dim):
                 self.remove((i, col), self.board)
 
+
+
+    def game_over_procedure(self):
+        '''
+        Ends the game
+        '''
+        print(f"GAME OVER! You reached score {self.score}!")
 
 
     def remove(self, coord, where):

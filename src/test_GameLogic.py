@@ -14,7 +14,7 @@ class TestGameLogic(unittest.TestCase):
         Gives us a fresh game board each time.
         """
 
-        self.game = GameLogic(10)
+        self.game = GameLogic(10, verbose=False)
         self.game.displayed = [TEST_PIECE_DOT, TEST_PIECE_LINE_HORIZENTAL, TEST_PIECE_LINE_VERTICAL] 
 
     def test_initialization(self):
@@ -67,6 +67,15 @@ class TestGameLogic(unittest.TestCase):
         self.assertFalse(self.game.is_valid_move(move))
 
         move = Move(1, (9, 9))
+        self.assertFalse(self.game.is_valid_move(move))
+
+    def test_placing_nonexistant_piece(self):
+        """
+        Test placing a piece that has already been placed
+        """
+        move = Move(0, (0,0))
+        self.game.execute_move(move)
+        self.assertEqual(self.game.displayed[0], None)
         self.assertFalse(self.game.is_valid_move(move))
 
     def test_need_to_clear_row(self):
@@ -189,4 +198,3 @@ class TestGameLogic(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
