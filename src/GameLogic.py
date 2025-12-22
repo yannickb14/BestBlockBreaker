@@ -3,11 +3,7 @@ To segregate the logic from the UI
 Just the logic of the game, no UI
 '''
 
-
-
 import random
-from collections import defaultdict
-from tkinter import font
 
 from piece import PIECES, DEBUG_PIECES
 from Move import Move
