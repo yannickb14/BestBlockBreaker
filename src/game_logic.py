@@ -135,7 +135,7 @@ class GameLogic:
                 continue
 
             move = self.parse_input(user_in)
-            if not move in None:
+            if not move is None:
                 self.execute_move(move)
 
             if self.check_game_over():
@@ -207,7 +207,7 @@ class GameLogic:
 
     def need_to_clear(self):
         '''
-        Check if any of the inputted rows or columns need to be cleared
+        Check if any rows or columns need to be cleared
         and increment score (for now)
         '''
         rows_to_clear = []
