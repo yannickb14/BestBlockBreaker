@@ -3,9 +3,7 @@ from tkinter import font
 from collections import defaultdict
 
 from game_logic import GameLogic
-from Move import Move
 
-from piece import DEBUG_PIECES
 
 
 def add_tup(a, b):
@@ -15,11 +13,10 @@ def add_tup(a, b):
     return (a1 + b1, a2 + b2)
 
 
-class Board:
+class GameGUI:
     def __init__(self, coord_start, coord_end, width, height, dim):
 
-        self.game = GameLogic(dim)
-        self.game.piece_options = DEBUG_PIECES
+        self.game = GameLogic(dim, display_message=self.flash_message)
 
         self.coord_start = coord_start 
         self.coord_end = coord_end
@@ -80,9 +77,11 @@ class Board:
                            ) 
 
   
-    def flash_message(self, text, color, duration=3000):
+    def flash_message(self, text, color="black", duration=3000):
+        pos_x = (self.coord_start + self.coord_end) / 2
+        pos_y = self.coord_end + 4*self.diff
         msg = self.c.create_text(
-            200, 100,
+            pos_x, pos_y,
             text=text,
             fill=color,
         )
@@ -98,18 +97,43 @@ class Board:
         move = self.entry.get()
 
         move = self.game.parse_input(move) 
+        if move is None:
+            return
+
+        src = move.src
+        piece = self.game.displayed[src]
 
         success = self.game.execute_move(move)    
         if success:
+            print("SUCESS RUNNING")
             self.update_score()
             self.refresh_board()    
+            for coord in piece: #Remove the piece from the holders
+                self.remove(add_tup(coord, self.holders[src]), self.piece_options_store)
+
+            print(self.game.displayed)
+            if all(self.game.displayed): #This means the backend just reset the 3 pieces so we update them
+                print("UPDATING DISPLAYED")
+                self.update_displayed()
+ 
+            
+           
 
 
     def refresh_board(self):
+        '''
+        Reload the board to place everything new and remove everything old
+        '''
+
+    
         for i in range(self.game.dim):
             for j in range(self.game.dim):
                 if self.game.board[i][j] and not self.board[i][j]:
                     self.place([(0,0)], (i,j), self.board)
+
+                elif self.board[i][j] and not self.game.board[i][j]:
+                    self.remove(self.board[i][j])
+
         
 
 
@@ -155,14 +179,15 @@ class Board:
         #Make the first one gold so we know where its actually being place
         for i, p in enumerate(piece):
             self.fill(add_tup(coord, p), where, color="gold" if i==0 else "blue")
-
  
     def update_displayed(self):
         for i in range(3):
             self.place(self.game.displayed[i], self.holders[i], where = self.piece_options_store)        
 
+
+
  
 if __name__ == "__main__":
-    b=Board(50, 550, 600, 800, 10)
+    b=GameGUI(50, 550, 600, 800, 10)
 
 
