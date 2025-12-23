@@ -54,8 +54,11 @@ class GameGUI:
         self.entry = tk.Entry(root)
         self.entry.pack()
 
-        btn = tk.Button(root, text="Submit", command=self.get_input)
+        btn = tk.Button(root, text="Submit", command=self.get_input)        
         btn.pack()
+
+        root.bind('<Return>', lambda event : btn.invoke())
+
         self.update_score()
         self.update_displayed()
 
@@ -95,6 +98,7 @@ class GameGUI:
     
     def get_input(self):
         move = self.entry.get()
+        self.entry.delete(0, tk.END)
 
         move = self.game.parse_input(move) 
         if move is None:
@@ -105,7 +109,6 @@ class GameGUI:
 
         success = self.game.execute_move(move)    
         if success:
-            print("SUCESS RUNNING")
             self.update_score()
             self.refresh_board()    
             for coord in piece: #Remove the piece from the holders
@@ -132,7 +135,16 @@ class GameGUI:
                     self.place([(0,0)], (i,j), self.board)
 
                 elif self.board[i][j] and not self.game.board[i][j]:
-                    self.remove(self.board[i][j])
+                    self.remove((i,j), self.board)
+
+
+        ##DELETE THIS, JUST A SANITY CHECK##
+        for i in range(self.game.dim):
+            for j in range(self.game.dim):
+                assert ( 
+                    (self.board[i][j] and self.game.board[i][j]) or 
+                 ((not self.board[i][j]) and (not self.game.board[i][j]))
+                )
 
         
 

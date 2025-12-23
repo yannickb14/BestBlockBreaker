@@ -4,6 +4,8 @@ Just the logic of the game, no UI
 '''
 
 import random
+from collections.abc import Callable
+
 
 from piece import PIECES
 from Move import Move
@@ -15,7 +17,7 @@ def add_tup(a, b):
     return (a1 + b1, a2 + b2)
 
 class GameLogic:
-    def __init__(self, dim, verbose = True, display_message = print):
+    def __init__(self, dim: int, display_message: Callable, verbose: bool = True):
 
         self.verbose = verbose
         if dim != 10:
@@ -234,7 +236,7 @@ class GameLogic:
 
  
 if __name__ == "__main__":
-    game = GameLogic(10)
+    game = GameLogic(10, print)
     game.get_input()
 
 
