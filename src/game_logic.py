@@ -37,7 +37,7 @@ class GameLogic:
         self.generate_pieces()
 
 
-    def is_valid_move(self, move):
+    def is_valid_move(self, move, verbose):
         '''
         Things to look out for:
         - Overlap with other pieces
@@ -47,14 +47,14 @@ class GameLogic:
         dest = move.dest
 
         if not src in range(3):
-            if self.verbose:
+            if verbose:
                 self.display_message(f"Invalid move, src must be between 0 and 2 inclusive, you entered {src}")
             return False
 
         piece = self.displayed[src]
 
         if piece is None:
-            if self.verbose:
+            if verbose:
                 self.display_message(f"Invalid move, no piece at position {src}")
             return False
 
@@ -62,17 +62,17 @@ class GameLogic:
 
         for r, c in tiles:
             if not (0 <= r < self.dim) or not (0 <= c < self.dim):
-                if self.verbose:
-                    self.display_message("Invalid move, coordinate ({r},{c} out of range for dimension {self.dim})")
+                if verbose:
+                    self.display_message(f"Invalid move, coordinate ({r},{c}) out of range for dimension {self.dim}")
                 return False
 
         for r, c in tiles:
             if self.board[r][c] != 0:
-                if self.verbose:
+                if verbose:
                     self.display_message("Invalid move, overlap at position ({r},{c})")
                 return False
 
-        if self.verbose:
+        if verbose:
             self.display_message("Valid move")
         return True
         
@@ -95,18 +95,12 @@ class GameLogic:
         if len(innput) != 3:
             self.display_message("Move must consist of 3 things")
             return None
-        src = innput[0]
-        dest = (innput[2], innput[1])
 
         try:
-            src = int(src)
-        except TypeError:
-            self.display_message(f'Invalid move, {src} is not a valid piece option')
-            return None
-        try:
-            dest = (int(dest[0]), int(dest[1]))
-        except TypeError:
-            self.display_message(f"Invalid move, {dest} is not a valid coordinate to place")
+            src = int(innput[0])
+            dest = int(innput[2]), int(innput[1])
+        except ValueError:
+            self.display_message("Invalid move, must consist of integers")
             return None
 
         return Move(src, dest)
@@ -131,7 +125,7 @@ class GameLogic:
 
             elif user_in == 'p':
                 self.display_message("Here are your options:")
-                self.display_options
+                self.display_options()
                 continue
 
             move = self.parse_input(user_in)
@@ -153,7 +147,7 @@ class GameLogic:
             for i in range(10):
                 for j in range(10):
                     move = Move(piece_idx, (i, j))
-                    if self.is_valid_move(move):
+                    if self.is_valid_move(move, verbose=False):
                         return False
         return True
 
@@ -162,7 +156,7 @@ class GameLogic:
         Update board state by executing the move
         Returns whether the move was succesfully executed
         '''
-        if not self.is_valid_move(move):
+        if not self.is_valid_move(move, self.verbose):
             return False
             
 
