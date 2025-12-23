@@ -114,9 +114,7 @@ class GameGUI:
             for coord in piece: #Remove the piece from the holders
                 self.remove(add_tup(coord, self.holders[src]), self.piece_options_store)
 
-            print(self.game.displayed)
             if all(self.game.displayed): #This means the backend just reset the 3 pieces so we update them
-                print("UPDATING DISPLAYED")
                 self.update_displayed()
  
             
