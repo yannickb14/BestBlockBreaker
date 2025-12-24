@@ -1,0 +1,19 @@
+'''
+Code from 
+https://github.com/davaus80/COMP424-Fall2025/blob/main/store.py
+'''
+
+AGENT_REGISTRY = {}
+
+# Define decorator for registering game agents
+def register_agent(agent_name=""):
+    def decorator(func):
+        if agent_name not in AGENT_REGISTRY:
+            AGENT_REGISTRY[agent_name] = func
+        else:
+            raise AssertionError(
+                f"Agent {AGENT_REGISTRY[agent_name]} is already registered."
+            )
+        return func
+
+    return decorator
