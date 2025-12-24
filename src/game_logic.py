@@ -5,7 +5,7 @@ Just the logic of the game, no UI
 
 import random
 from collections.abc import Callable
-
+from copy import deepcopy
 
 from piece import PIECES
 from Move import Move
@@ -15,6 +15,9 @@ def add_tup(a, b):
     b1, b2 = b
 
     return (a1 + b1, a2 + b2)
+
+def do_nothing(_):
+    pass
 
 class GameLogic:
     def __init__(self, dim: int, display_message: Callable, verbose: bool = True):
@@ -233,6 +236,17 @@ class GameLogic:
   
     def generate_pieces(self):
         self.displayed = random.sample(self.piece_options, 3)
+
+    def clone(self):
+        '''
+        Returns a clone of the current game state
+        '''
+        cloned_state = GameLogic(self.dim, display_message=do_nothing)
+        cloned_state.board = deepcopy(self.board)
+        cloned_state.score = self.score
+
+        return cloned_state
+        
 
  
 if __name__ == "__main__":
