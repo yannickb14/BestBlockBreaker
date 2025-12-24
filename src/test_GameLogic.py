@@ -6,6 +6,9 @@ TEST_PIECE_DOT = [(0, 0)]
 TEST_PIECE_LINE_HORIZENTAL = [(0, 0), (0, 1), (0, 2)]
 TEST_PIECE_LINE_VERTICAL = [(0,0), (1,0), (2,0)]
 
+def do_nothing(_):
+    pass
+
 class TestGameLogic(unittest.TestCase):
 
     def setUp(self):
@@ -14,7 +17,7 @@ class TestGameLogic(unittest.TestCase):
         Gives us a fresh game board each time.
         """
 
-        self.game = GameLogic(10, verbose=False)
+        self.game = GameLogic(10, verbose=False, display_message = do_nothing)
         self.game.displayed = [TEST_PIECE_DOT, TEST_PIECE_LINE_HORIZENTAL, TEST_PIECE_LINE_VERTICAL] 
 
     def test_initialization(self):
@@ -36,14 +39,14 @@ class TestGameLogic(unittest.TestCase):
         move = Move(0, (5, 5)) #The dot
         
         #First move should be valid
-        self.assertTrue(self.game.is_valid_move(move))
+        self.assertTrue(self.game.is_valid_move(move, False))
 
         #Test edge/corner moves
         move_corner = Move(0, (9, 9))
         move_edge = Move(0, (5, 9))
         
-        self.assertTrue(self.game.is_valid_move(move_corner))
-        self.assertTrue(self.game.is_valid_move(move_edge))
+        self.assertTrue(self.game.is_valid_move(move_corner, False))
+        self.assertTrue(self.game.is_valid_move(move_edge, False))
 
         self.game.execute_move(move)
         
@@ -58,7 +61,7 @@ class TestGameLogic(unittest.TestCase):
 
         move = Move(0, (3, 3))
 
-        self.assertFalse(self.game.is_valid_move(move))
+        self.assertFalse(self.game.is_valid_move(move, False))
 
     def test_out_of_bounds(self):
         """
@@ -66,10 +69,10 @@ class TestGameLogic(unittest.TestCase):
         """
         
         move = Move(0, (10, 10))
-        self.assertFalse(self.game.is_valid_move(move))
+        self.assertFalse(self.game.is_valid_move(move, False))
 
         move = Move(1, (9, 9))
-        self.assertFalse(self.game.is_valid_move(move))
+        self.assertFalse(self.game.is_valid_move(move, False))
 
     def test_placing_nonexistant_piece(self):
         """
@@ -78,7 +81,7 @@ class TestGameLogic(unittest.TestCase):
         move = Move(0, (0,0))
         self.game.execute_move(move)
         self.assertEqual(self.game.displayed[0], None)
-        self.assertFalse(self.game.is_valid_move(move))
+        self.assertFalse(self.game.is_valid_move(move, False))
 
     def test_need_to_clear_row(self):
         """Test need to clear catches rows"""
@@ -157,7 +160,7 @@ class TestGameLogic(unittest.TestCase):
                 self.game.board[row][col] = 1
 
         move = Move(2, (5,9))
-        self.assertTrue(self.game.is_valid_move(move))
+        self.assertTrue(self.game.is_valid_move(move, False))
         self.game.execute_move(move)
         for row in self.game.board:
             self.assertFalse(any(row))
@@ -172,7 +175,7 @@ class TestGameLogic(unittest.TestCase):
                 self.game.board[row][col] = 1
 
         move = Move(1, (9,5))
-        self.assertTrue(self.game.is_valid_move(move))
+        self.assertTrue(self.game.is_valid_move(move, False))
         self.game.execute_move(move)
         for row in self.game.board:
             self.assertFalse(any(row))
@@ -193,7 +196,7 @@ class TestGameLogic(unittest.TestCase):
 
         #Place 1x1 piece at the intersection. Score should by 21
         move = Move(0, (7, 3))
-        self.assertTrue(self.game.is_valid_move(move)) 
+        self.assertTrue(self.game.is_valid_move(move, False)) 
         self.game.execute_move(move)
         self.assertEqual(self.game.score, 87)
 
