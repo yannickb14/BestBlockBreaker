@@ -28,8 +28,18 @@ class GameInterface:
         return self._game.execute_move(move) 
 
     def is_valid_move(self, move):
-        return self._game.is_valid_move(move)
+        return self._game.is_valid_move(move, verbose=False)
             
     def get_sandbox(self):
         """Returns a clone for the AI to mess around with"""
         return self._game.clone()
+
+    def check_game_over(self):
+        if self._game.check_game_over():
+            self.game_over_procedure()
+            return True
+
+        return False
+
+    def game_over_procedure(self):
+        self._game.game_over_procedure()

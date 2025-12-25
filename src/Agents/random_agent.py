@@ -8,10 +8,14 @@ from store import register_agent
 @register_agent("random_agent")
 class RandomAgent(Agent):
     def __init__(self, game_interface):
-        super.__init__(game_interface)
+        super().__init__(game_interface)
 
     def choose_move(self):
-       possible_moves = super.get_possible_moves() 
-       return random.choice(possible_moves)
+        possible_moves = self.get_possible_moves() 
+        assert possible_moves, "Game should not prompt for a move if the game is over"    
+
+        if possible_moves:
+            return random.choice(possible_moves)
+    
 
         
