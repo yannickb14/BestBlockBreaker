@@ -8,9 +8,6 @@ class GameInterface:
         self._game = GameLogic(10, print)
         self._score = self._game.score
 
-        if gui:
-            self.gui = GameGUI()
-
     def get_score(self):
         '''
         Getter functon to get the score to ensure nobody can edit the score through the interface
