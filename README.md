@@ -24,10 +24,13 @@ Current Features
 
 * Collision Detection: Ensures pieces can only be placed in valid, unoccupied spaces.
 
-* Line Clearing: Automated detection and removal of completed horizontal and vertical lines. 
+* Line Clearing: Automated detection and removal of completed horizontal and vertical lines.
 ___
 **🛠 Tech Stack**
-Language: Python 3.9
+
+* Language: Python 3.9
+
+* GUI: Tkinter
 
 Logic: Custom coordinate-mapping and collision algorithms.
 ___
