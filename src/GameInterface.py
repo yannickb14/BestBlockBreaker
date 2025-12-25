@@ -1,9 +1,10 @@
 from copy import deepcopy
 
+from game_logic import GameLogic
 
 class GameInterface:
-    def __init__(self, logic_instance):
-        self._game = logic_instance
+    def __init__(self):
+        self._game = GameLogic(10, print)
         self._score = self._game.score
 
     def get_score(self):
