@@ -74,7 +74,7 @@ class GameLogic:
         for r, c in tiles:
             if self.board[r][c] != 0:
                 if verbose:
-                    self.display_message("Invalid move, overlap at position ({r},{c})")
+                    self.display_message(f"Invalid move, overlap at position ({r},{c})")
                 return False
 
         if verbose:

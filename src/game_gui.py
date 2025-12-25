@@ -3,7 +3,7 @@ from tkinter import font
 from collections import defaultdict
 
 from game_logic import GameLogic
-
+from config import *
 
 
 def add_tup(a, b):
@@ -14,7 +14,7 @@ def add_tup(a, b):
 
 
 class GameGUI:
-    def __init__(self, coord_start, coord_end, width, height, dim):
+    def __init__(self, coord_start=COORD_START, coord_end=COORD_END, width=WIDTH, height=HEIGHT, dim=DIM):
 
         self.game = GameLogic(dim, display_message=self.flash_message)
 

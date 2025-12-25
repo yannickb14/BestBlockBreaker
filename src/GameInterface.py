@@ -1,11 +1,15 @@
 from copy import deepcopy
 
 from game_logic import GameLogic
+from game_gui import GameGUI
 
 class GameInterface:
-    def __init__(self):
+    def __init__(self, gui = False):
         self._game = GameLogic(10, print)
         self._score = self._game.score
+
+        if gui:
+            self.gui = GameGUI()
 
     def get_score(self):
         '''
