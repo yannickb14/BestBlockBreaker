@@ -1,3 +1,9 @@
+'''
+Made a agent with gemini just to make sure the API and my code works
+THis agent really sucks!
+'''
+
+
 
 from .agent import Agent
 from store import register_agent

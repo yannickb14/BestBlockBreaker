@@ -4,15 +4,14 @@ from game_logic import GameLogic
 from game_gui import GameGUI
 
 class GameInterface:
-    def __init__(self, gui = False):
-        self._game = GameLogic(10, print)
-        self._score = self._game.score
+    def __init__(self, game = None, display_message = print):
+        self._game = game if game else GameLogic(10, display_message)
 
     def get_score(self):
         '''
         Getter functon to get the score to ensure nobody can edit the score through the interface
         '''
-        return self._score
+        return self._game.score
 
     def get_piece_options(self):
         '''

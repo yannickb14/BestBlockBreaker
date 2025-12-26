@@ -14,9 +14,9 @@ def add_tup(a, b):
 
 
 class GameGUI:
-    def __init__(self, coord_start=COORD_START, coord_end=COORD_END, width=WIDTH, height=HEIGHT, dim=DIM):
+    def __init__(self, coord_start=COORD_START, coord_end=COORD_END, width=WIDTH, height=HEIGHT, dim=DIM, game = None):
 
-        self.game = GameLogic(dim, display_message=self.flash_message)
+        self.game = game if game else GameLogic(dim, display_message=self.flash_message)
 
         self.coord_start = coord_start 
         self.coord_end = coord_end
@@ -64,7 +64,6 @@ class GameGUI:
 
 
         c.pack()
-        self.root.mainloop()
 
     def update_score(self):
         pos = (self.coord_start + self.coord_end) / 2
@@ -109,6 +108,9 @@ class GameGUI:
 
         success = self.game.execute_move(move)    
         if success:
+            self.successful_move_protocol(src, piece)
+
+    def successful_move_protocol(self, src, piece):
             self.update_score()
             self.refresh_board()    
             for coord in piece: #Remove the piece from the holders
@@ -116,6 +118,7 @@ class GameGUI:
 
             if all(self.game.displayed): #This means the backend just reset the 3 pieces so we update them
                 self.update_displayed()
+
  
             
            
@@ -198,6 +201,8 @@ class GameGUI:
 
  
 if __name__ == "__main__":
-    b=GameGUI(50, 550, 600, 800, 10)
+    game = GameGUI()
+    game.root.mainloop()
+
 
 
