@@ -9,40 +9,48 @@ class GreedyAgent(Agent):
 
     def choose_move(self):
         moves = self.get_possible_moves()
-        
+    
         min_dist_to_clear = 11
         best_move = None
+    
+        # Randomly pick a default move in case no move is found 
+        # (prevents crash if all moves result in gaps >= 11)
+        if moves:
+            best_move = moves[0]
+
         for move in moves:
             dummy_game = self.game_interface.get_sandbox()
             dummy_game.submit_move(move)
-
             dummy_board = dummy_game.get_board_state()
-            #To find the longest contiguous block of unfilled cells 
-            #in the row in one pass of the row
+
+            # Helper function to process a single list (row or col)
+            def process_line(line):
+                nonlocal min_dist_to_clear, best_move
+                cur_dist = 0
+                for cell in line:
+                    if not cell: # If empty
+                        cur_dist += 1
+                    else: # If filled
+                        if cur_dist > 0: 
+                            if cur_dist < min_dist_to_clear:
+                                min_dist_to_clear = cur_dist
+                                best_move = move
+                        cur_dist = 0
+
+                # BUG FIX 2: Check again after loop finishes for gaps at the end
+                if cur_dist > 0 and cur_dist < min_dist_to_clear:
+                    min_dist_to_clear = cur_dist
+                    best_move = move
+
+            # Check rows
             for row in dummy_board:
-                cur_dist_to_clear = 0
-                for cell in row:
-                    if not cell:
-                        cur_dist_to_clear += 1
-                    else: #If a cell is filled, check if this contiguous block is smaller then the min found thus far set the cur distance to 0
-                        if cur_dist_to_clear < min_dist_to_clear:
-                            min_dist_to_clear = cur_dist_to_clear
-                            best_move = move
-                        cur_dist_to_clear = 0 
+                process_line(row)
 
-            for col in zip(*dummy_board): #zip(*... to get the columns
-                cur_dist_to_clear = 0
-                for cell in col:
-                    if not cell:
-                        cur_dist_to_clear += 1
-                    else: #If a cell is filled, check if this contiguous block is smaller then the min found thus far set the cur distance to 0
-                        if cur_dist_to_clear < min_dist_to_clear:
-                            min_dist_to_clear = cur_dist_to_clear
-                            best_move = move
-                        cur_dist_to_clear = 0 
-
-
-        assert best_move, "No best move found"        
+            # Check cols
+            for col in zip(*dummy_board):
+                process_line(col)
+        
+        print()
         return best_move
             
 

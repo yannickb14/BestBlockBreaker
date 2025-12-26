@@ -27,6 +27,11 @@ class Agent:
 
         return possible_moves
              
-    def choose_move(self):
-        pass
+    def choose_move(self) -> Move: 
+        '''
+        The function that returns a move. This should
+        contain the logic for how the agent picks a move.
+
+        '''
+        return None
 

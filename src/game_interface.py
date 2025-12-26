@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 from game_logic import GameLogic
-from game_gui import GameGUI
 
 class GameInterface:
     def __init__(self, game = None, display_message = print):
