@@ -110,6 +110,9 @@ class GameGUI:
         if success:
             self.successful_move_protocol(src, piece)
 
+        if self.game.check_game_over():
+            self.game.game_over_procedure()
+
     def successful_move_protocol(self, src, piece):
             self.update_score()
             self.refresh_board()    

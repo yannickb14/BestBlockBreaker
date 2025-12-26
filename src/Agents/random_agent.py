@@ -12,8 +12,7 @@ class RandomAgent(Agent):
 
     def choose_move(self):
         possible_moves = self.get_possible_moves() 
-        assert possible_moves, "Game should not prompt for a move if the game is over"    
-
+        
         if possible_moves:
             return random.choice(possible_moves)
     
