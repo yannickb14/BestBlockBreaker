@@ -32,7 +32,9 @@ class GameInterface:
             
     def get_sandbox(self):
         """Returns a clone for the AI to mess around with"""
-        return self._game.clone()
+        game = self._game.clone()
+        dummy_game = GameInterface(game)
+        return dummy_game
 
     def check_game_over(self):
         if self._game.check_game_over():

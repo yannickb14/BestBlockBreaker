@@ -246,9 +246,7 @@ class GameLogic:
         cloned_state.score = self.score
 
         return cloned_state
-        
-
- 
+         
 if __name__ == "__main__":
     game = GameLogic(10, print)
     game.get_input()
