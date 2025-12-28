@@ -3,7 +3,7 @@ from tkinter import font
 from collections import defaultdict
 
 from game_logic import GameLogic
-from config import *
+from config import COORD_START, COORD_END, WIDTH, HEIGHT, DIM
 
 
 def add_tup(a, b):
