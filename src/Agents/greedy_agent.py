@@ -99,31 +99,5 @@ class GreedyAgent(Agent):
 
             return best_move
             
-                
-        #    for row in rows_to_check:
-        #        line = dummy_board[row]
-        #        line_diff = row_lengths[row] - count_empty_contiguous_block(line)
-        #        if line_diff < 0: #Cleared this line
-        #            row_lengths[row] += 100
-        #        else:
-        #            row_lengths[row] = line_diff
-
-        #    for col in cols_to_check:
-        #        line = col_indexed_board[col]
-        #        line_diff = col_lengths[col] - count_empty_contiguous_block(line)
-        #        if line_diff < 0:
-        #            col_lengths[col] += 100
-        #        else:
-        #            col_lengths[col] = line_diff
-
-        #    cur_max_diff = max(max(row_lengths.values()), max(col_lengths.values()))
-        #    if cur_max_diff > max_diff: 
-        #        max_diff = cur_max_diff 
-        #        best_move = move
-        
-        #return best_move
             
-
-        
-
          
