@@ -49,31 +49,6 @@ class GreedyAgent(Agent):
             rows_to_check = {dest_x + x for x, _ in piece}
             cols_to_check = {dest_y + y for _, y in piece}
             
-            print(f'{rows_to_check=}')
-            print(f'{cols_to_check=}')
-
-           # def process_line(line):
-           #     print(line)
-           #     nonlocal min_dist_to_clear, best_move
-           #     cur_dist = 0
-           #     for cell in line:
-           #         if not cell: # If empty
-           #             cur_dist += 1
-           #         else: # If filled
-           #             if cur_dist < min_dist_to_clear:
-           #                 min_dist_to_clear = cur_dist
-           #                 best_move = move
-           #             cur_dist = 0
-
-           #     if cur_dist < min_dist_to_clear:
-           #         min_dist_to_clear = cur_dist
-           #         best_move = move
-
-
-
-
-
-            
             dummy_board = dummy_game.get_board_state()
             col_indexed_board = list(zip(*dummy_board))
             
@@ -85,27 +60,68 @@ class GreedyAgent(Agent):
                 line = col_indexed_board[col]
                 col_lengths[col] = count_empty_contiguous_block(line)
 
-            print(f'{row_lengths=}')
-            print(f'{col_lengths=}')
-
             dummy_game.submit_move(move)
             dummy_board = dummy_game.get_board_state()
             col_indexed_board = list(zip(*dummy_board))
-                
+
             for row in rows_to_check:
                 line = dummy_board[row]
-                row_lengths[row] = row_lengths[row] - count_empty_contiguous_block(line)
+                new_len = count_empty_contiguous_block(line)
+                old_len = row_lengths[row]
+                
+                if new_len > old_len:
+                    # We cleared a line! Give this a massive priority score 
+                    row_lengths[row] = 100 + new_len
+                else:
+                    # Standard hole filling
+                    row_lengths[row] = old_len - new_len
 
             for col in cols_to_check:
                 line = col_indexed_board[col]
-                col_lengths[row] = col_lengths[row] - count_empty_contiguous_block(line)
+                new_len = count_empty_contiguous_block(line)
+                old_len = col_lengths[col] # Fixed Typo: changed [row] to [col]
+                
+                if new_len > old_len:
+                    col_lengths[col] = 100 + new_len
+                else:
+                    col_lengths[col] = old_len - new_len
 
-            cur_max_diff = max(max(row_lengths.values()), max(col_lengths.values()))
-            if cur_max_diff >= max_diff: 
+            # Check if we found a new best move
+            # We use 0 as a default to prevent crashing if the dicts are empty
+            best_row_score = max(row_lengths.values()) if row_lengths else -999
+            best_col_score = max(col_lengths.values()) if col_lengths else -999
+            
+            cur_max_diff = max(best_row_score, best_col_score)
+            
+            if cur_max_diff > max_diff: 
                 max_diff = cur_max_diff 
                 best_move = move
+
+            return best_move
+            
+                
+        #    for row in rows_to_check:
+        #        line = dummy_board[row]
+        #        line_diff = row_lengths[row] - count_empty_contiguous_block(line)
+        #        if line_diff < 0: #Cleared this line
+        #            row_lengths[row] += 100
+        #        else:
+        #            row_lengths[row] = line_diff
+
+        #    for col in cols_to_check:
+        #        line = col_indexed_board[col]
+        #        line_diff = col_lengths[col] - count_empty_contiguous_block(line)
+        #        if line_diff < 0:
+        #            col_lengths[col] += 100
+        #        else:
+        #            col_lengths[col] = line_diff
+
+        #    cur_max_diff = max(max(row_lengths.values()), max(col_lengths.values()))
+        #    if cur_max_diff > max_diff: 
+        #        max_diff = cur_max_diff 
+        #        best_move = move
         
-        return best_move
+        #return best_move
             
 
         
