@@ -56,6 +56,11 @@ if __name__ == "__main__":
 
         game_gui.root.after(3000, run_gui_step)
         game_gui.root.mainloop()
+    
+    else:
+        while not game_interface.check_game_over():
+            move = agent.choose_move()
+            game_interface.submit_move(move)
 
 
         

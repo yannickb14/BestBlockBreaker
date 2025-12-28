@@ -1,6 +1,5 @@
 '''Trial run. This agent will pick a random move'''
 
-
 import random
 from .agent import Agent
 from store import register_agent

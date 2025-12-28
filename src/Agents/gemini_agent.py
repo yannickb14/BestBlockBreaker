@@ -29,12 +29,12 @@ class GeminiAgent(Agent):
 
             # 2. Simulate the move in the sandbox
             # The sandbox is a raw GameLogic object, so we call execute_move directly
-            sandbox.execute_move(move)
+            sandbox.submit_move(move)
 
             # 3. Compare the resulting score
             # We look for the move that leaves us with the highest TOTAL score
-            if sandbox.score > max_score:
-                max_score = sandbox.score
+            if sandbox.get_score() > max_score:
+                max_score = sandbox.get_score()
                 best_move = move
 
         return best_move
