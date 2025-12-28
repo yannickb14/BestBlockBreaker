@@ -11,7 +11,6 @@ class RandomAgent(Agent):
         super().__init__(game_interface)
 
     def choose_move(self):
-        print("Choosing move")
         possible_moves = self.get_possible_moves() 
         
         if possible_moves:
