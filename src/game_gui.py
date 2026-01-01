@@ -194,14 +194,11 @@ class GameGUI:
     def place(self, piece, coord, where):
         #Make the first one gold so we know where its actually being place
         for i, p in enumerate(piece):
-            self.fill(add_tup(coord, p), where, color="gold" if i==0 else "blue")
+            self.fill(add_tup(coord, p), where, color="blue")
  
     def update_displayed(self):
         for i in range(3):
             self.place(self.game.displayed[i], self.holders[i], where = self.piece_options_store)        
-
-
-
  
 if __name__ == "__main__":
     game = GameGUI()
