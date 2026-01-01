@@ -97,6 +97,7 @@ class GreedyAgent(Agent):
                 max_diff = cur_max_diff 
                 best_move = move
 
+            print(max_diff)
             return best_move
             
             
