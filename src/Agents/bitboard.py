@@ -1,5 +1,37 @@
 
 
+def make_piece_mask(piece_shape):
+    """
+    Converts a list of coordinates into a mask, ensuring the shape 
+    is normalized to start at (0,0) to avoid negative shifts.
+    """
+    # 1. Find the top-left-most bounds (min row and min col)
+    min_r = min(r for r, c in piece_shape)
+    min_c = min(c for r, c in piece_shape)
+    
+    mask = 0
+    for r, c in piece_shape:
+        # 2. Normalize: Shift the coordinate so the top-left is (0,0)
+        # If a point was (-1, 0) and min_r is -1, it becomes (-1 - -1) = 0.
+        norm_r = r - min_r
+        norm_c = c - min_c
+        
+        # 3. Calculate 1D index using normalized values
+        index = (norm_r * 10) + norm_c
+
+        if index < 0:
+            print(f"CRASH REPORT:")
+            print(f"Current Point: ({r}, {c})")
+            print(f"Minimums: min_r={min_r}, min_c={min_c}")
+            print(f"Normalized: norm_r={norm_r}, norm_c={norm_c}")
+            print(f"Calculated Index: {index}")
+            raise ValueError("Stopping before crash to read prints")
+
+
+        mask |= (1 << index)
+        
+    return mask
+
 class BitboardSimulator:
     def __init__(self, board_list=None): 
         #self.board = 0
@@ -71,27 +103,7 @@ class BitboardSimulator:
             
         return lines_cleared
     
-    def make_piece_mask(self, piece_shape):
-        """
-        Converts a list of coordinates into a mask, ensuring the shape 
-        is normalized to start at (0,0) to avoid negative shifts.
-        """
-        # 1. Find the top-left-most bounds (min row and min col)
-        min_r = min(r for r, c in piece_shape)
-        min_c = min(c for r, c in piece_shape)
-        
-        mask = 0
-        for r, c in piece_shape:
-            # 2. Normalize: Shift the coordinate so the top-left is (0,0)
-            # If a point was (-1, 0) and min_r is -1, it becomes (-1 - -1) = 0.
-            norm_r = r - min_r
-            norm_c = c - min_c
-            
-            # 3. Calculate 1D index using normalized values
-            index = (norm_r * 10) + norm_c
-            mask |= (1 << index)
-            
-        return mask
+
 
    
     

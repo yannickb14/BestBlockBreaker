@@ -1,14 +1,14 @@
 
 from .agent import Agent
 from store import register_agent
-from bitboard import BitboardSimulator
+from .bitboard import BitboardSimulator, make_piece_mask
 
 @register_agent("genetic_agent")
 class GeneticAgent(Agent):
     def __init__(self, game_interface):
         super().__init__(game_interface)
         
-        self.weights = [0, 0, 0]
+        self.weights = [6.737, -0.889, -6.631]
 
     def choose_move(self):
         moves = self.get_possible_moves()
@@ -31,7 +31,7 @@ class GeneticAgent(Agent):
             piece_idx = move.src
             if piece_idx not in piece_mask_cache: 
                 piece_shape = self.game_interface.get_piece_options()[piece_idx]
-                piece_mask_cache[piece_idx] = self._make_piece_mask(piece_shape)
+                piece_mask_cache[piece_idx] = make_piece_mask(piece_shape)
             
             piece_mask = piece_mask_cache[piece_idx]
             
@@ -48,17 +48,22 @@ class GeneticAgent(Agent):
 
             # 6. Calculate Features (The "Genes")
             # Feature 1: Lines Cleared (We want to maximize this)
-            feat_lines = lines_cleared
+            feat_lines = lines_cleared / 6.
             
             # Feature 2: Isolated Holes (We want to minimize this)
             # Normalize: divide by 100 so it's between 0 and 1
             feat_holes = sim.count_isolated_holes() / 100.0 
+
+            feat_empty = sim.count_empty_cells() / 100.
             
             # 7. Calculate Weighted Score (Dot Product)
             # Weights order: [Lines, Holes, Bumpiness]
             # Example weights might be: [5.0, -10.0, -2.0]
             score = (self.weights[0] * feat_lines) + \
-                    (self.weights[1] * feat_holes) 
+                    (self.weights[1] * feat_holes) + \
+                    (self.weights[2] * feat_empty)
+
+
                 
 
             if score > best_score:
@@ -67,16 +72,6 @@ class GeneticAgent(Agent):
 
         return best_move
 
-    def _make_piece_mask(self, piece_shape):
-        """
-        Helper: Converts a list of tuples [(0,0), (1,0)] into a bitmask integer.
-        """
-        mask = 0
-        for r, c in piece_shape:
-            # Calculate 1D index: row * 10 + col
-            index = (r * 10) + c
-            mask |= (1 << index)
-        return mask
 
 
         
