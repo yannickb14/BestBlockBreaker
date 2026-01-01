@@ -1,7 +1,5 @@
 
 
-
-
 class BitboardSimulator:
     def __init__(self, board_list=None): 
         #self.board = 0
@@ -18,6 +16,11 @@ class BitboardSimulator:
 
         if board_list:
             self.board = self._list_to_bitboard(board_list)
+
+        else:
+            self.board = 0 
+        
+
 
     def _list_to_bitboard(self, board_list):
         bb = 0
@@ -67,13 +70,36 @@ class BitboardSimulator:
             self.board ^= full_rows_mask
             
         return lines_cleared
+    
+    def make_piece_mask(self, piece_shape):
+        """
+        Converts a list of coordinates into a mask, ensuring the shape 
+        is normalized to start at (0,0) to avoid negative shifts.
+        """
+        # 1. Find the top-left-most bounds (min row and min col)
+        min_r = min(r for r, c in piece_shape)
+        min_c = min(c for r, c in piece_shape)
+        
+        mask = 0
+        for r, c in piece_shape:
+            # 2. Normalize: Shift the coordinate so the top-left is (0,0)
+            # If a point was (-1, 0) and min_r is -1, it becomes (-1 - -1) = 0.
+            norm_r = r - min_r
+            norm_c = c - min_c
+            
+            # 3. Calculate 1D index using normalized values
+            index = (norm_r * 10) + norm_c
+            mask |= (1 << index)
+            
+        return mask
 
+   
     
     # <---- HEURISTICS ---->
 
     def count_empty_cells(self):
         # A simple hole count (empty cells)
-        occupied = self.board.bit_count() 
+        occupied = self.board.bit_count()
         return 100 - occupied
 
     def count_isolated_holes(self):
