@@ -193,7 +193,7 @@ class GameGUI:
 
     def place(self, piece, coord, where):
         #Make the first one gold so we know where its actually being place
-        for i, p in enumerate(piece):
+        for _, p in enumerate(piece):
             self.fill(add_tup(coord, p), where, color="blue")
  
     def update_displayed(self):
