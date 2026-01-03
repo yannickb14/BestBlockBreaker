@@ -1,4 +1,4 @@
-# 1010! Game Clone & Evolutionary AI Framework
+# [1010!](https://apps.apple.com/us/app/1010-block-puzzle-game/id911793120) Game Clone & AI Framework
 
 A high-performance Python simulation of the logic-based puzzle game *1010!*, designed as a testbed for developing and training autonomous Artificial Intelligence agents.
 
@@ -30,7 +30,7 @@ The core goal of this repository was not just to recreate the game, but to engin
 
 ## 🛠 Tech Stack
 * **Language:** Python 3.10+
-* **Visualization:** Tkinter (Standard Library)
+* **Visualization:** `tkinter` interface
 * **Performance:** `multiprocessing`, Bitwise Operations
 * **Testing:** `unittest` module
 
