@@ -1,54 +1,112 @@
-***1010!* Game Clone (Python/Tkinter)**
+# 1010! Game Clone & Evolutionary AI Framework
+
+A high-performance Python simulation of the logic-based puzzle game *1010!*, designed as a testbed for developing and training autonomous Artificial Intelligence agents.
+
+Unlike standard clones, this project decouples the game logic from the visualization to support **headless training**, **multiprocessing**, and **evolutionary learning** strategies.
+
 ---
-Find the original game [here](https://apps.apple.com/us/app/1010-block-puzzle-game/id911793120)
 
-A logic-based puzzle game developed in Python using the Tkinter library. This project is a working clone of the popular *1010!* mobile game, focusing on grid-based spatial reasoning and efficient state management.
-while still rough around the edges, the game does work!
-___
-**Instructions to Play**
+## 🎮 Project Overview
+This project replicates the mechanics of the *1010!* mobile game (by Gram Games Limited), where players place polyomino shapes onto a 10x10 grid to clear lines.
 
-Run the file *board_class.py* and the game will open right up!
+The core goal of this repository was not just to recreate the game, but to engineer an **Evolutionary AI** capable of surpassing human-level "greedy" heuristics through genetic optimization and lookahead search strategies.
 
-For now, the moves are commands you put on the text box at the bottom. A move consisits of 3 comma seperated values like so: 
+---
 
-PIECE,ROW,COL
-It is 0-indexed. If you wanted to actually play the game, I recommend playing the iOS version as mine is stil **VERY** rough around the edges and barely tested.
-___
-**🎮 Project Overview**
-*1010!* is a mobile game by *Gram Games Limited* in which players are tasked with placing various polyomino shapes onto a 10x10 grid. Unlike Tetris, blocks do not fall; the player must strategically place them to complete full rows or columns, which then clear to make space for more pieces.
+## 🚀 Key Features
 
-Current Features
-* Grid Logic: A robust 10x10 coordinate system that tracks occupied and empty cells.
+### Core Engine
+* **Decoupled Architecture:** Strict separation of concerns between the Game State (Model) and the Tkinter GUI (View). This allows the AI to train in "headless" mode (no graphics) at maximum speed.
+* **Deterministic Logic:** Fully deterministic collision detection and line-clearing algorithms, validated by a comprehensive `unittest` suite.
+* **Plug-and-Play AI:** An abstract `Agent` interface using the **Strategy Pattern**, allowing easy hot-swapping between Human, Random, Greedy, and Genetic agents.
 
-* Piece Generation: Random generation of unique shapes that fit in a 3x3 space (single blocks, lines and L-shapes).
+### AI & Performance Optimization
+* **Bitboard Optimization:** The Genetic Agent uses **100-bit integers** (bitboards) instead of 2D arrays to represent the grid. This reduces collision checks and pattern matching to **O(1)** bitwise operations.
+* **Evolutionary Learning:** A Genetic Algorithm (GA) that autonomously tunes heuristic weights (e.g., *Bumpiness*, *Holes*, *Aggregate Height*) over generations using Elitism and Mutation.
+* **Multiprocessing:** Training is parallelized across CPU cores to evaluate population fitness rapidly.
+* **Survival Lookahead:** Features a "Survival Gene" and a 3-step permutation search to break the "Greedy Limit" (approx. 800 points), enabling the bot to plan ahead for large pieces.
 
-* Collision Detection: Ensures pieces can only be placed in valid, unoccupied spaces.
+---
 
-* Line Clearing: Automated detection and removal of completed horizontal and vertical lines.
-___
-**🛠 Tech Stack**
+## 🛠 Tech Stack
+* **Language:** Python 3.10+
+* **Visualization:** Tkinter (Standard Library)
+* **Performance:** `multiprocessing`, Bitwise Operations
+* **Testing:** `unittest` module
 
-* Language: Python 3.9
+---
+## 🤖 Creating & Running Agents
 
-* GUI: Tkinter
+You can create custom AI agents and plug them directly into the simulation.
 
-Logic: Custom coordinate-mapping and collision algorithms.
-___
-**🤖 Future Roadmap: AI Integration**
+### 1. Create the Agent File
 
-The primary objective of this project—beyond the game itself is to create a testing environment for Artificial Intelligence.
+Duplicate the template file to create your new agent:
 
-Once the game mechanics are fully polished, I plan to develop an AI Agent (or maybe a few) capable of playing the game autonomously. This will involve:
+    cp Agents/blank_agent.py Agents/my_custom_agent.py
 
-* State Evaluation: Teaching the agent to value board "emptiness" and penalize "islands" (trapped empty squares).
+### 2. Register the Agent
 
-* Heuristic Search: Implementing algorithms to calculate the optimal placement of the three available pieces to maximize the score and longevity of the game.
+Open your new file (`Agents/my_custom_agent.py`) and add the registration decorator above your class definition.  
+This allows the system to find your agent by name.
 
-* Reinforcement Learning: Exploring how a model can learn the best strategies through thousands of iterations of trial and error.
-___
-**📈 Learning Objectives**
-* GUI State Persistence: Managing real-time updates to a complex grid UI in Tkinter.
+    from . import register_agent
 
-* Algorithm Design: Optimizing the check for "Game Over" states (verifying if any of the three current pieces can fit anywhere on the remaining board).
+    @register_agent("my_agent")  # <--- This is the name you will use in the command line
+    class MyCustomAgent(Agent):
+        def get_move(self, board, pieces):
+            # Your logic here
+            pass
 
-* Scalability: Structuring the code so the game engine can be easily hooked into an AI script without a complete rewrite.
+### 3. Expose the Agent
+
+Open `Agents/__init__.py` and import your new file so the registry can load it:
+
+    # Agents/__init__.py
+    from . import blank_agent
+    from . import my_custom_agent  # <--- Add this line
+
+### 4. Run the Simulation
+
+Run the game with your agent using `run.py`.
+
+**With Visuals (GUI Mode):**  
+Use this to watch the agent play in real-time.
+
+    python3.10 run.py --agent my_agent --gui
+
+**Headless Mode (Fast):**  
+Use this for rapid testing or training without the window overhead.
+
+    python3.10 run.py --agent my_agent
+
+## 🧠 AI Implementation Details
+
+The AI moves beyond simple greedy strategies by utilizing a weighted heuristic function:
+
+$$
+Score = (w_1 \cdot Lines) + (w_2 \cdot Holes) + (w_3 \cdot Bumpiness) + (w_4 \cdot Survival)
+$$
+
+**Initial Approach (Greedy):**  
+The agent simply picked the move that cleared the most lines immediately.  
+This typically failed around 800 points due to lack of foresight.
+
+**Evolutionary Approach:**  
+By simulating thousands of games and "breeding" the best performing weight sets, the agent learned to prioritize flat board states and avoid creating wells (deep holes).
+
+**Optimization:**  
+Converting the board state to a 100-bit integer allowed the simulation to run thousands of moves per second, making the training of large populations feasible on consumer hardware (e.g., Apple Silicon).
+
+## 📜 Future Improvements
+
+- **Deep Reinforcement Learning (DQN):**  
+  Implementing a neural network approach to compare against the Genetic Algorithm.
+
+- **C++ Extension:**  
+  Rewriting the core bitboard logic in C++ for even faster training throughput.
+
+
+
+
+
